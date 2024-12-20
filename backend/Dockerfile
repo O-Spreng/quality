@@ -1,5 +1,7 @@
 FROM node:20
 
+RUN apt-get update && apt-get install -y telnet
+
 WORKDIR /app
 
 COPY package.json package-lock.json ./
@@ -9,4 +11,4 @@ COPY . .
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "npx sequelize-cli db:migrate && node src/app.js"]
+CMD ["npm", "start"]

@@ -13,6 +13,13 @@ services:
       DB_NAME: clientes_db
     depends_on:
       - mysql
+    command: >
+      sh -c "
+      while ! echo exit | telnet mysql 3306 2>/dev/null | grep -q 'Connected'; do
+        echo 'Waiting for MySQL to be ready...';
+        sleep 3;
+      done;
+      npm start"
 
   mysql:
     image: mysql:8.0
@@ -28,9 +35,13 @@ services:
   frontend:
     build:
       context: ./frontend
+      args:
+        VITE_ENDPOINT_API: http://localhost:3000
     container_name: frontend
     ports:
       - "8080:80"
+    environment:
+      - VITE_ENDPOINT_API=http://localhost:3000
     depends_on:
       - backend
 

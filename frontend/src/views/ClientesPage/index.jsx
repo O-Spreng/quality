@@ -4,17 +4,17 @@ import FiltroClientes from "../../components/FiltroClientes";
 import ClientesTable from "../../components/ClientesTable";
 import ClienteModal from "../../components/ClienteModal";
 
+const API_ENDPOINT = import.meta.env.VITE_ENDPOINT_API;
+
 const ClientesPage = () => {
   const [clientes, setClientes] = useState([]);
   const [filtros, setFiltros] = useState({ Codigo: '', Nome: '', Cidade: '', CEP: '' });
   const [modal, setModal] = useState({ open: false, mode: 'view', cliente: null });
 
   const fetchClientes = async (queryParams = {}) => {
-    console.log("Fetching data..." , queryParams);
-
     try {
-      // const { data } = await axios.get('/api/clientes', { params: queryParams });
-      // setClientes(data);
+      const { data } = await axios.get(`${API_ENDPOINT}/api/clientes`, { params: queryParams });
+      setClientes(data);
 
     } catch (error) {
       console.error('Erro ao buscar clientes:', error);
@@ -46,13 +46,17 @@ const ClientesPage = () => {
           Novo
         </button>
       </div>
-      <ClientesTable clientes={clientes} openModal={openModal}/>
+      <ClientesTable
+        clientes={clientes}
+        openModal={openModal}
+        refreshClientes={() => fetchClientes(filtros)}
+      />
       {modal.open && (
         <ClienteModal
           mode={modal.mode}
           cliente={modal.cliente}
           closeModal={closeModal}
-          refreshClientes={() => setFiltros({ ...filtros })}
+          refreshClientes={() => fetchClientes(filtros)}
         />
       )}
     </div>

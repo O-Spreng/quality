@@ -1,6 +1,9 @@
-FROM node:20
+FROM node:20 AS build
 
 WORKDIR /app
+
+ARG VITE_ENDPOINT_API
+ENV VITE_ENDPOINT_API=${VITE_ENDPOINT_API}
 
 COPY package.json package-lock.json ./
 RUN npm install
@@ -10,7 +13,7 @@ COPY . .
 RUN npm run build
 
 FROM nginx:alpine
-COPY --from=0 /app/dist /usr/share/nginx/html
+COPY --from=build /app/dist /usr/share/nginx/html
 
 EXPOSE 80
 

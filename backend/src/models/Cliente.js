@@ -59,7 +59,7 @@ const Cliente = sequelize.define('Cliente', {
     type: DataTypes.FLOAT
   },
   Validade: {
-    type: DataTypes.DATE
+    type: DataTypes.DATEONLY
   },
 }, {
   tableName: 'Clientes',

@@ -4,17 +4,10 @@ module.exports = {
   async createCliente(req, res, next) {
     try {
       const cliente = await clienteService.createCliente(req.body);
+      if (cliente.error) {
+        return res.status(cliente.errorCode).json({ error: cliente.error });
+      }
       res.status(201).json(cliente);
-    } catch (error) {
-      next(error);
-    }
-  },
-
-  async getClienteById(req, res, next) {
-    const { id } = req.params;
-    try {
-      const cliente = await clienteService.getClienteById(id);
-      res.json(cliente);
     } catch (error) {
       next(error);
     }
@@ -32,8 +25,11 @@ module.exports = {
   async updateCliente(req, res, next) {
     const { id } = req.params;
     try {
+      if (!id) {
+        res.status(400).json({ error: 'ID é obrigatório' });
+      }
       await clienteService.updateCliente(id, req.body);
-      res.json({ message: 'Cliente atualizado com sucesso' });
+      res.status(204).json();
     } catch (error) {
       next(error);
     }
